@@ -1,6 +1,6 @@
 {
   "name": "ts-genetic",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A flexible genetic algorithm implementation in TypeScript",
   "type": "module",
   "main": "dist/index.js",

@@ -48,6 +48,8 @@ console.log('Best solution:', population[0].genes[0]);
 
 ### Real-World Example: Sudoku Solver
 
+See it here: [Sudoku Solver Example](https://janbkrejci.github.io/ts-genetic/).
+
 To see a more complex example, check out the example folder in the repository. It contains a Sudoku solver that uses the genetic algorithm to solve Sudoku puzzles.
 
 ```bash
