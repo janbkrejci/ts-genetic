@@ -2,7 +2,7 @@ import './style.css';
 import * as R from 'ramda';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 import { SudokuSolver } from './sudoku/solver';
-import { formatBoard, boardToString, stringToBoard } from './sudoku/utils';
+import { formatBoard, stringToBoard } from './sudoku/utils';
 import { SudokuBoard } from './sudoku/types';
 
 const emptyBoard: SudokuBoard = Array(9)
@@ -241,7 +241,7 @@ document.getElementById('clearBtn')?.addEventListener('click', () => {
 });
 
 document.getElementById('copyBtn')?.addEventListener('click', () => {
-  const copyBtn = document.getElementById('copyBtn')!;
+  const copyBtn = document.getElementById('copyBtn')! as HTMLButtonElement;
   const solutionEl = document.getElementById('solution')!;
 
   if (solutionEl.textContent) {

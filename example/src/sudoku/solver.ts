@@ -1,6 +1,6 @@
 import { GeneticAlgorithm } from 'ts-genetic';
 import * as R from 'ramda';
-import { Individual, SolverConfig, SudokuBoard, SolverResult, SudokuError } from './types';
+import { SolverConfig, SudokuIndividual, SudokuBoard, SolverResult, SudokuError } from './types';
 import { isValidBoard } from './validator';
 import { calculateFitness } from './fitness';
 import { createIndividual, crossover, mutate } from './population';
@@ -58,22 +58,22 @@ export class SudokuSolver {
         row.map(cell => cell !== 0)
       );
 
-      const geneticAlgorithm = new GeneticAlgorithm<number[][]>(
+      const geneticAlgorithm = new GeneticAlgorithm<number[]>(
         this.config,
         {
-          createIndividual: (length: number) =>
+          createIndividual: (_length: number) =>
             createIndividual(initialBoard, this.immutablePositions),
 
-          crossover: (parent1: Individual<number[][]>, parent2: Individual<number[][]>) =>
+          crossover: (parent1: SudokuIndividual, parent2: SudokuIndividual) =>
             crossover(parent1, parent2, this.immutablePositions),
 
-          mutate: (individual: Individual<number[][]>, mutationRate: number) =>
+          mutate: (individual: SudokuIndividual, mutationRate: number) =>
             mutate(individual, mutationRate, this.immutablePositions),
 
-          calculateFitness: (individual: Individual<number[][]>) =>
+          calculateFitness: (individual: SudokuIndividual) =>
             calculateFitness(individual.genes),
 
-          isTerminationConditionMet: (population: Individual<number[][]>, generation: number) => {
+          isTerminationConditionMet: (population: SudokuIndividual[], generation: number) => {
             const bestFitness = Math.max(...population.map(ind => ind.fitness));
             return bestFitness === 1 || generation >= this.config.generationLimit;
           }

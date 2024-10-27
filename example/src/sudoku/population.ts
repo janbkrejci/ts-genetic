@@ -1,18 +1,18 @@
 import * as R from 'ramda';
-import { Individual, SudokuBoard } from './types';
+import { SudokuBoard, SudokuIndividual } from './types';
 import { calculateFitness } from './fitness';
 
 function getValidDigits(board: SudokuBoard, row: number, col: number): number[] {
   const used = new Set<number>();
-  
+
   // Check row
   board[row].forEach(n => used.add(n));
-  
+
   // Check column
   for (let i = 0; i < 9; i++) {
     used.add(board[i][col]);
   }
-  
+
   // Check 3x3 box
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(col / 3) * 3;
@@ -21,7 +21,7 @@ function getValidDigits(board: SudokuBoard, row: number, col: number): number[] 
       used.add(board[boxRow + i][boxCol + j]);
     }
   }
-  
+
   return R.range(1, 10).filter(n => !used.has(n));
 }
 
@@ -52,67 +52,47 @@ function fillValidDigits(board: SudokuBoard, immutablePositions: boolean[][]): v
 export function createIndividual(
   board: SudokuBoard,
   immutablePositions: boolean[][]
-): Individual {
+): SudokuIndividual {
   const genes = R.clone(board);
   fillValidDigits(genes, immutablePositions);
-  
+
   return {
     genes,
     fitness: calculateFitness(genes),
   };
 }
 
-export function selectParent(population: Individual[]): Individual {
+export function selectParent(population: SudokuIndividual[]): SudokuIndividual {
   const totalFitness = R.sum(population.map(ind => ind.fitness));
   let random = Math.random() * totalFitness;
-  
+
   for (const individual of population) {
     random -= individual.fitness;
     if (random <= 0) return individual;
   }
-  
+
   return population[population.length - 1];
 }
 
 export function crossover(
-  parent1: Individual,
-  parent2: Individual,
-  immutablePositions: boolean[][]
-): Individual {
-  return R.clone(parent1)
-  const childGenes = R.clone(parent1.genes);
-  
-  // Randomly select rows to take from parent2
-  for (let row = 0; row < 9; row++) {
-    if (Math.random() < 0.5) {
-      for (let col = 0; col < 9; col++) {
-        if (!immutablePositions[row][col]) {
-          childGenes[row][col] = parent2.genes[row][col];
-        }
-      }
-    }
-  }
-
-  // Fill any remaining valid moves
-  fillValidDigits(childGenes, immutablePositions);
-
-  return {
-    genes: childGenes,
-    fitness: calculateFitness(childGenes),
-  };
+  parent1: SudokuIndividual,
+  _parent2: SudokuIndividual,
+  _immutablePositions: boolean[][]
+): SudokuIndividual {
+  return R.clone(parent1);
 }
 
 export function mutate(
-  individual: Individual,
+  individual: SudokuIndividual,
   mutationRate: number,
   immutablePositions: boolean[][]
-): Individual {
+): SudokuIndividual {
   if (Math.random() >= mutationRate) {
     return individual;
   }
 
   const genes = R.clone(individual.genes);
-  
+
   // Clear some random mutable cells
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
@@ -121,7 +101,7 @@ export function mutate(
       }
     }
   }
-  
+
   // Try to fill cleared cells with valid digits
   fillValidDigits(genes, immutablePositions);
 

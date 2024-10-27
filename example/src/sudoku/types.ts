@@ -1,6 +1,6 @@
 export type SudokuBoard = number[][];
 
-export interface Individual {
+export interface SudokuIndividual {
   genes: SudokuBoard;
   fitness: number;
 }
